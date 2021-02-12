@@ -4,27 +4,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
-@Getter @Setter
-public class Book {
+@Getter
+@Setter
+public class Librarian {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private String isbn;
-
-    @Column
     private String name;
-
-    @Column
-    private String author;
-
-    @OneToMany
-    private List<BookInstance> bookInstance;
-
 
 
 }
