@@ -16,6 +16,11 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+    @GetMapping("/getAllBooks")
+    public List<BookDetails> getAllBook(){
+        return bookService.getAllBooks();
+    }
+
     @PostMapping("/{bookCopy}")
     public BookDetails addBook(@RequestBody Book book, @PathVariable(value="bookCopy") Integer bookCount){
         return bookService.addBook(book,bookCount);
@@ -29,5 +34,14 @@ public class BookController {
     @PostMapping("/checkout")
     public BookDetails checkOutBook(@RequestBody BookCheckOutRequest bookCheckOutRequest) throws ParseException {
         return bookService.checkOutBook(bookCheckOutRequest);
+    }
+
+    @PutMapping("/return/{bookInstanceId}")
+    public BookDetails returnBook(@PathVariable(value = "bookInstanceId") Long bookInstanceId) throws ParseException {
+        return bookService.returnBook(bookInstanceId);
+    }
+    @PutMapping("/extendDay")
+    public BookDetails extendDay(@RequestBody BookCheckOutRequest bookCheckOutRequest) throws ParseException {
+        return bookService.extendDay(bookCheckOutRequest);
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -98,4 +97,45 @@ public class BookService {
     }
 
 
+    public BookDetails returnBook(Long bookInstanceId) {
+
+        BookInstance instance = bookInstanceRepository.getOne(bookInstanceId);
+        instance.setStatus(Status.Unreserved);
+        instance.setIssueDate(null);
+        instance.setDueDate(null);
+
+        BookDetails bookDetails = UtilityService.getBookDetailByBookInstance(instance);
+
+        return bookDetails;
+    }
+
+    public BookDetails extendDay(BookCheckOutRequest bookCheckOutRequest) {
+        BookInstance bookInstance = bookInstanceRepository.getOne(bookCheckOutRequest.getId());
+        int noOfDueDate = bookCheckOutRequest.getNoOfDueDays();
+
+        Date currentDate = bookInstance.getDueDate();
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(currentDate);
+        c.add(Calendar.DATE, noOfDueDate);
+
+        Date currentDatePlusAdded = c.getTime();
+
+        bookInstance.setDueDate(currentDatePlusAdded);
+
+        BookDetails bookDetails = UtilityService.getBookDetailByBookInstance(bookInstance);
+
+        return bookDetails;
+    }
+
+    public List<BookDetails> getAllBooks() {
+        List<BookDetails> bookDetailList = new ArrayList<>();
+
+        List<Book> allBooks = bookRepository.findAll();
+        for(Book book:allBooks){
+            BookDetails bookDetails = new BookDetails(book.getName(),book.getAuthor());
+            bookDetailList.add(bookDetails);
+        }
+        return bookDetailList;
+    }
 }
