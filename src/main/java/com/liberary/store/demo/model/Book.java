@@ -22,7 +22,7 @@ public class Book {
     @Column
     private String author;
 
-    @OneToMany
+    @OneToMany(mappedBy = "book")
     private List<BookInstance> bookInstance;
 
 
