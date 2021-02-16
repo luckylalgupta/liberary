@@ -122,7 +122,7 @@ public class BookService {
         Date currentDatePlusAdded = c.getTime();
 
         bookInstance.setDueDate(currentDatePlusAdded);
-
+        bookInstanceRepository.save(bookInstance);
         BookDetails bookDetails = UtilityService.getBookDetailByBookInstance(bookInstance);
 
         return bookDetails;
