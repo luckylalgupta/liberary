@@ -23,10 +23,10 @@ public class BookService {
 
     public BookDetails addBook(Book book, Integer count){
         List<BookInstance> bookInstList= new ArrayList<>();
+        book.setStatus(Status.Live);
+
         book = bookRepository.save(book);
-        if(null!=book.getStatus()){
-            book.setStatus(Status.Live);
-        }
+
         for(int i=0;i<count;i++){
             BookInstance instance = new BookInstance();
             instance.setStatus(Status.Unreserved);
@@ -145,13 +145,14 @@ public class BookService {
     public BookDetails discontinueTheBook(Long bookId) {
         Optional<Book> book = bookRepository.findById(bookId);
         book.get().setStatus(Status.Discontinued);
-
-        List<BookInstance> bookInstances = book.get().getBookInstance();
+        bookRepository.save(book.get());
+        List<BookInstance> bookInstances = bookInstanceRepository.getAllByBook_Id(book.get().getId());
         for(BookInstance bookInstance:bookInstances){
             if(bookInstance.getStatus().equals(Status.Unreserved)){
                 bookInstance.setStatus(Status.Discontinued);
             }
         }
+        bookInstanceRepository.saveAll(bookInstances);
         BookDetails bookDetail = UtilityService.getBookDetailByBook(book.get());
 
         return bookDetail;

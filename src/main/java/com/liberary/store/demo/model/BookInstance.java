@@ -37,6 +37,7 @@ public class BookInstance {
                 "Id=" + Id +
                 ", book=" + book +
                 ", status=" + status +
+                ", issueDate=" + issueDate +
                 ", dueDate=" + dueDate +
                 '}';
     }
