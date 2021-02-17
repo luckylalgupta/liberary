@@ -1,6 +1,7 @@
 package com.liberary.store.demo.service;
 
 import com.liberary.store.demo.exception.BookAllReadyReserved;
+import com.liberary.store.demo.exception.BookIsDiscontinued;
 import com.liberary.store.demo.exception.BookNotFoundException;
 import com.liberary.store.demo.model.*;
 import com.liberary.store.demo.repository.BookInstanceRepository;
@@ -10,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class BookService {
@@ -26,6 +24,9 @@ public class BookService {
     public BookDetails addBook(Book book, Integer count){
         List<BookInstance> bookInstList= new ArrayList<>();
         book = bookRepository.save(book);
+        if(null!=book.getStatus()){
+            book.setStatus(Status.Live);
+        }
         for(int i=0;i<count;i++){
             BookInstance instance = new BookInstance();
             instance.setStatus(Status.Unreserved);
@@ -63,8 +64,10 @@ public class BookService {
 
             return bookDetails;
         }
-            throw new BookAllReadyReserved("Book not found");
-
+        else if(bookInstance.getStatus().equals(Status.Reserved))
+            throw new BookAllReadyReserved("Book already reserved");
+        else
+            throw new BookIsDiscontinued("Sorry this book is discontinued");
     }
 
     public List<Book> searchBook(String params) {
@@ -109,7 +112,7 @@ public class BookService {
         return bookDetails;
     }
 
-    public BookDetails extendDay(BookCheckOutRequest bookCheckOutRequest) {
+    public BookDetails extendDueDate(BookCheckOutRequest bookCheckOutRequest) {
         BookInstance bookInstance = bookInstanceRepository.getOne(bookCheckOutRequest.getId());
         int noOfDueDate = bookCheckOutRequest.getNoOfDueDays();
 
@@ -137,5 +140,20 @@ public class BookService {
             bookDetailList.add(bookDetails);
         }
         return bookDetailList;
+    }
+
+    public BookDetails discontinueTheBook(Long bookId) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        book.get().setStatus(Status.Discontinued);
+
+        List<BookInstance> bookInstances = book.get().getBookInstance();
+        for(BookInstance bookInstance:bookInstances){
+            if(bookInstance.getStatus().equals(Status.Unreserved)){
+                bookInstance.setStatus(Status.Discontinued);
+            }
+        }
+        BookDetails bookDetail = UtilityService.getBookDetailByBook(book.get());
+
+        return bookDetail;
     }
 }

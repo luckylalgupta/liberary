@@ -1,5 +1,5 @@
 package com.liberary.store.demo.model;
 
 public enum Status {
-    Reserved,Unreserved
+    Reserved,Unreserved,Live,Discontinued
 }

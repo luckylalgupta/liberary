@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.persistence.EnumType;
 import java.util.List;
 
 @Entity
@@ -22,9 +23,11 @@ public class Book {
     @Column
     private String author;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column
+    private Status status;
+
     @OneToMany(mappedBy = "book")
     private List<BookInstance> bookInstance;
-
-
 
 }

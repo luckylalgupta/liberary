@@ -31,7 +31,7 @@ public class BookController {
         return bookService.searchBook(params);
     }
 
-    @PostMapping("/checkout")
+    @PutMapping("/checkout")
     public BookDetails checkOutBook(@RequestBody BookCheckOutRequest bookCheckOutRequest) throws ParseException {
         return bookService.checkOutBook(bookCheckOutRequest);
     }
@@ -40,8 +40,13 @@ public class BookController {
     public BookDetails returnBook(@PathVariable(value = "bookInstanceId") Long bookInstanceId) throws ParseException {
         return bookService.returnBook(bookInstanceId);
     }
-    @PutMapping("/extendDay")
-    public BookDetails extendDay(@RequestBody BookCheckOutRequest bookCheckOutRequest) throws ParseException {
-        return bookService.extendDay(bookCheckOutRequest);
+    @PutMapping("/extendDueDate")
+    public BookDetails extendDueDate(@RequestBody BookCheckOutRequest bookCheckOutRequest) throws ParseException {
+        return bookService.extendDueDate(bookCheckOutRequest);
+    }
+
+    @PutMapping("/discontinue/{bookId}")
+    public BookDetails discontinueTheBook(@PathVariable(value = "bookId") Long bookId){
+        return bookService.discontinueTheBook(bookId);
     }
 }
